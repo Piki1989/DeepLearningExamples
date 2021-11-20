@@ -788,3 +788,18 @@ def standarize_favorita(data_folder):
   
     print('Saving processed file to {}'.format(os.path.join(data_folder, 'standarized.csv')))
     temporal.to_csv(os.path.join(data_folder, 'standarized.csv'))
+
+''' Methods for cleaning existing data for our usage '''
+
+def standarize_energy_consumption_daily(path):
+
+    ''' 5 different locations for readings'''
+    deviceIds = {'245','323','452','682','1450'}
+    for id in deviceIds:
+        df = pd.read_csv(os.path.join(path, 'deviceId_'+id+'-energy_consumption_kWh_daily.csv'), index_col=0, sep=',', decimal='.')
+        df.index = pd.to_datetime(df.index)
+        df.sort_index(inplace=True)
+        ''' Sort csv and remove rows when percent_imputed_vals above 10% due to possible human error'''
+        df.drop(df[df.percent_imputed_vals > 10].index, inplace=True)
+        ''' Write sorted and cleaned csv '''
+        df.to_csv(path+'/standarized'+id+'.csv')
