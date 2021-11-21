@@ -122,7 +122,137 @@ class TrafficConfig():
                                       len(self.temporal_observed_categorical_inp_lens),
                                       ])
 
+class EnergyConsumptionDailyConfig():
+
+    def __init__(self):
+        '''Each feature and hyperparameter need to be adjusted'''
+        self.features = [
+            FeatureSpec('time', InputTypes.TIME, DataTypes.DATE),
+            FeatureSpec('energy_kWh', InputTypes.TARGET, DataTypes.CONTINUOUS),
+            FeatureSpec('percent_imputed_vals', InputTypes.KNOWN, DataTypes.STR),
+            FeatureSpec('min_temp', InputTypes.OBSERVED, DataTypes.CONTINUOUS),
+            FeatureSpec('max_temp', InputTypes.OBSERVED, DataTypes.CONTINUOUS),
+            FeatureSpec('mean_temp', InputTypes.OBSERVED, DataTypes.CONTINUOUS),
+            FeatureSpec('min_clouds_all', InputTypes.OBSERVED, DataTypes.CONTINUOUS),
+            FeatureSpec('max_clouds_all', InputTypes.OBSERVED, DataTypes.CONTINUOUS),
+            FeatureSpec('mean_clouds_all', InputTypes.OBSERVED, DataTypes.CONTINUOUS)
+        ]
+
+        # Dataset split boundaries
+        self.time_ids = 'time'  # This column contains time indices across which we split the data
+        self.train_range = (0, 151) #TBC
+        self.valid_range = (144, 166) #TBC
+        self.test_range = (159, float('inf')) #TBC
+        self.dataset_stride = 1  # how many timesteps between examples
+        self.scale_per_id = False
+        self.missing_id_strategy = None
+        self.missing_cat_data_strategy = 'encode_all'
+
+        # Feature sizes
+        self.static_categorical_inp_lens = [963] #TBC
+        self.temporal_known_categorical_inp_lens = []
+        self.temporal_observed_categorical_inp_lens = []
+        self.quantiles = [0.1, 0.5, 0.9]
+
+        self.example_length = 8 * 24
+        self.encoder_length = 7 * 24
+
+        self.n_head = 4
+        self.hidden_size = 128
+        self.dropout = 0.3
+        self.attn_dropout = 0.0
+
+        #### Derived variables ####
+        self.temporal_known_continuous_inp_size = len([x for x in self.features
+            if x.feature_type == InputTypes.KNOWN and x.feature_embed_type == DataTypes.CONTINUOUS])
+        self.temporal_observed_continuous_inp_size = len([x for x in self.features
+            if x.feature_type == InputTypes.OBSERVED and x.feature_embed_type == DataTypes.CONTINUOUS])
+        self.temporal_target_size = len([x for x in self.features if x.feature_type == InputTypes.TARGET])
+        self.static_continuous_inp_size = len([x for x in self.features
+            if x.feature_type == InputTypes.STATIC and x.feature_embed_type == DataTypes.CONTINUOUS])
+
+        self.num_static_vars = self.static_continuous_inp_size + len(self.static_categorical_inp_lens)
+        self.num_future_vars = self.temporal_known_continuous_inp_size + len(self.temporal_known_categorical_inp_lens)
+        self.num_historic_vars = sum([self.num_future_vars,
+                                      self.temporal_observed_continuous_inp_size,
+                                      self.temporal_target_size,
+                                      len(self.temporal_observed_categorical_inp_lens),
+                                      ])
+
+class WeatherConfig():
+
+    def __init__(self):
+        '''Each feature and hyperparameter need to be adjusted'''
+        self.features=[
+            FeatureSpec('dt', InputTypes.ID, DataTypes.CATEGORICAL),
+            FeatureSpec('dt_iso', InputTypes.TIME, DataTypes.DATE),
+            FeatureSpec('timezone', InputTypes.KNOWN, DataTypes.CATEGORICAL),
+            FeatureSpec('city_name', InputTypes.KNOWN, DataTypes.CATEGORICAL),
+            FeatureSpec('lat', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('lon', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('temp', InputTypes.TARGET, DataTypes.CONTINUOUS),
+            FeatureSpec('feels_like', InputTypes.OBSERVED, DataTypes.CONTINUOUS),
+            FeatureSpec('temp_min', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('temp_max', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('pressure', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('sea_level', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('grnd_level', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('humidity', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('wind_speed', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('wind_deg', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('rain_1h', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('rain_3h', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('snow_1h', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('snow_3h', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('clouds_all', InputTypes.OBSERVED, DataTypes.CONTINUOUS),
+            FeatureSpec('weather_id', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('weather_main', InputTypes.KNOWN, DataTypes.CONTINUOUS),
+            FeatureSpec('weather_description', InputTypes.KNOWN, DataTypes.STR),
+            FeatureSpec('weather_icon', InputTypes.KNOWN, DataTypes.CONTINUOUS)
+        ]
+        # Dataset split boundaries
+        self.time_ids = 'dt'  # This column contains time indices across which we split the data
+        self.train_range = (1096, 1315) #TBC
+        self.valid_range = (1308, 1339) #TBC
+        self.test_range = (1332, 1346) #TBC
+        self.dataset_stride = 1  # how many timesteps between examples
+        self.scale_per_id = True
+        self.missing_id_strategy = None
+        self.missing_cat_data_strategy = 'encode_all'
+
+        # Feature sizes
+        self.static_categorical_inp_lens = [369] #TBC
+        self.temporal_known_categorical_inp_lens = []
+        self.temporal_observed_categorical_inp_lens = []
+        self.quantiles = [0.1, 0.5, 0.9]
+
+        self.example_length = 8 * 24
+        self.encoder_length = 7 * 24
+
+        self.n_head = 4
+        self.hidden_size = 128
+        self.dropout = 0.1
+        self.attn_dropout = 0.0
+
+        #### Derived variables ####
+        self.temporal_known_continuous_inp_size = len([x for x in self.features
+            if x.feature_type == InputTypes.KNOWN and x.feature_embed_type == DataTypes.CONTINUOUS])
+        self.temporal_observed_continuous_inp_size = len([x for x in self.features
+            if x.feature_type == InputTypes.OBSERVED and x.feature_embed_type == DataTypes.CONTINUOUS])
+        self.temporal_target_size = len([x for x in self.features if x.feature_type == InputTypes.TARGET])
+        self.static_continuous_inp_size = len([x for x in self.features
+            if x.feature_type == InputTypes.STATIC and x.feature_embed_type == DataTypes.CONTINUOUS])
+
+        self.num_static_vars = self.static_continuous_inp_size + len(self.static_categorical_inp_lens)
+        self.num_future_vars = self.temporal_known_continuous_inp_size + len(self.temporal_known_categorical_inp_lens)
+        self.num_historic_vars = sum([self.num_future_vars,
+                                      self.temporal_observed_continuous_inp_size,
+                                      self.temporal_target_size,
+                                      len(self.temporal_observed_categorical_inp_lens),
+                                      ])
 
 CONFIGS = {'electricity':  ElectricityConfig,
-           'traffic':      TrafficConfig, 
+           'traffic':      TrafficConfig,
+           'energy_consumption': EnergyConsumptionDailyConfig,
+           'weather': WeatherConfig,
            }
