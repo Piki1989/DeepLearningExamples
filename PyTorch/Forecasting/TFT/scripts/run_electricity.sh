@@ -14,8 +14,8 @@
 
 : ${SEED:=1}
 : ${LR:=1e-3}
-: ${NGPU:=8}
-: ${BATCH_SIZE:=1024}
+: ${NGPU:=2}
+: ${BATCH_SIZE:=4096}
 : ${EPOCHS:=30}
 
 python -m torch.distributed.run --nproc_per_node=${NGPU} train.py \
@@ -27,4 +27,4 @@ python -m torch.distributed.run --nproc_per_node=${NGPU} train.py \
         --epochs ${EPOCHS} \
         --seed ${SEED} \
         --use_amp \
-        --results /results/TFT_electricity_bs${NGPU}x${BATCH_SIZE}_lr${LR}/seed_${SEED}
+        --results /data/results/TFT_electricity_bs${NGPU}x${BATCH_SIZE}_lr${LR}/seed_${SEED}
