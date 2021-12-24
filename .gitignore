@@ -1,3 +1,7 @@
 repos.cfg
 repos_init.cfg
 nvtool*
+.idea/
+PyTorch/Forecasting/TFT/.idea/
+PyTorch/Forecasting/TFT/data/
+Tools/PyTorch/TimeSeriesPredictionPlatform/models/tft_pyt/
